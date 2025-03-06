@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <title id="pageTitle">Hieroglyph Transliterator</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="Artur A.">
+
+		<script>
+		
+		function generate() {
+		
+			var input = document.getElementById("inputField").value;
+			
+			console.log("Form input is: " + input);
+			
+			input = input.toLowerCase();
+			input = input.replace(/[0-9`~!@#$%^&*_|+\=?;:"<>.,\s]/g,"");
+		
+			var output = transliterate(input);
+			
+			console.log("Form output is: " + output);
+			
+			document.getElementById("outputField").innerHTML = output;
+		
+		}
+		
+		function transliterate(input) {
+		
+			console.log("Function input is: " + input);
+		
+			// Source: https://en.wikipedia.org/wiki/Transliteration_of_Ancient_Egyptian
+			
+			var output = input;
+			
+			//TODO: Add digraphs, eg. sh, ch, th and biliterals
+			
+			output = output.replace(/[a]/g,"\u{1313F}");
+			output = output.replace(/[i]/g,"\u{131CB}"); // Same as 'y'
+			output = output.replace(/[u]/g,"\u{13171}"); // Same as 'w'
+			output = output.replace(/[e]/g,"\u{131CB}"); // Same as 'i'
+			output = output.replace(/[o]/g,"\u{1313F}"); // Same as 'a'
+			output = output.replace(/[p]/g,"\u{132AA}");
+			output = output.replace(/[t]/g,"\u{133CF}");
+			output = output.replace(/[k]/g,"\u{133A1}");
+			output = output.replace(/[b]/g,"\u{130C0}");
+			output = output.replace(/[d]/g,"\u{130A7}");
+			output = output.replace(/[g]/g,"\u{133BD}");
+			output = output.replace(/[f]/g,"\u{13191}");
+			output = output.replace(/[s]/g,"\u{132F4}");
+			output = output.replace(/[h]/g,"\u{13254}");
+			output = output.replace(/[v]/g,"\u{13191}"); // Same as 'f'
+			output = output.replace(/[z]/g,"\u{13283}");
+			output = output.replace(/[m]/g,"\u{13153}");
+			output = output.replace(/[n]/g,"\u{13216}");
+			output = output.replace(/[w]/g,"\u{13171}");
+			output = output.replace(/[r]/g,"\u{1308B}");
+			output = output.replace(/[l]/g,"\u{1308B}"); // Same as 'r'
+			output = output.replace(/[y]/g,"\u{131CB}");
+			output = output.replace(/[j]/g,"\u{13193}");
+			output = output.replace(/[q]/g,"\u{1320E}");
+			output = output.replace(/[x]/g,"\u{133A1}\u{132F4}"); // Assuming 'k'+'s'
+			output = output.replace(/[c]/g,"\u{133A1}"); // Same as 'k'
+			
+			//TODO: Refine phonological approximations
+			
+			console.log("Function output is: " + output);
+		
+			return output;
+		
+		}
+				
+		</script>
+
+	<style>
+		body {font-family: sans-serif}
+		h1, h2, h3, noscript, form, output {text-align: center}
+		
+		.output {
+		  width: 160px;
+		  height: 40px;
+		  border: 4px double black;
+		  border-radius: 30px;
+		  display: inline-block;
+		  padding: 3px 5px;
+		  position: relative;
+		  font-size: large;
+		}
+
+		.output:after {
+		  content: '';
+		  position: absolute;
+		  right: -8px;
+		  width: 0;
+		  top: -4px;
+		  height: calc(100% + 8px);
+		  border-right: 4px double black;
+		}
+		
+	</style>
+
+  </head>
+
+  <body>
+  <h1>Hieroglyph Transliterator</h1>
+      <form action="" id="mainForm">
+          Enter your name:
+          <input type="text" name="inputField" id="inputField" value=""></text>
+          <p><input type=button class="button" value="Transliterate to hieroglyphics" 
+				onClick="generate()"/></p>
+      	  <p id="outputField" class="output"><!--Start blank--></p>
+      	  <!--TODO: Make cartouche sizing dynamic-->
+      	  <!--TODO: Add option of vertical or horizontal output, or right-to-left-->
+      	  <!--TODO: Fix output font size-->
+      	  <!--TODO: Add options for determiners (man, woman, king)-->
+      </form>
+  </body>
+</html>
