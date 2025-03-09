@@ -15,15 +15,19 @@
 			
 			console.log("Form input is: " + input);
 			
+			// Use only lower case (hieroglyphs don't have case)
 			input = input.toLowerCase();
+			// Remove all punctuation, inc. spaces
 			input = input.replace(/[0-9`~!@#$%^&*_|+\=?;:"<>.,\s\-]/g,"");
-							
+			
+			// Main transliteration function
 			var output = transliterate(input);
 			
 			console.log("Form output is: " + output);
 			
+			// Horizontal cartouche output
 			document.getElementById("outputFieldH").innerHTML = output;
-			
+			// Vertical cartouche output (with extra conversion function)
 			document.getElementById("outputFieldV").innerHTML = verticalise(output);
 		
 		}
@@ -42,6 +46,7 @@
 			//TODO: Add biliterals and triliterals
 			
 			// Specific names with own hieroglyphs; TODO: add more gods
+			  // ^ and $ ensure it's the full string, rather than a substring
 			output = output.replace(/^osiris$/g,"\u{13032}");
 			output = output.replace(/^hathor$/g,"\u{13065}");
 			output = output.replace(/^thoth$/g,"\u{1305F}");
@@ -75,6 +80,7 @@
 			output = output.replace(/wh/g,"w");
 			
 			// Single letters/sounds
+			  // [ ] ensure it covers all instances of any of the chars
 			output = output.replace(/[aàáâäæ]/g,"\u{1313F}");
 			output = output.replace(/[iìíîï]/g,"\u{131CB}");
 			output = output.replace(/[eœèéêëöø]/g,"\u{1309D}");
@@ -91,7 +97,8 @@
 			output = output.replace(/[m]/g,"\u{13153}");
 			output = output.replace(/[n]/g,"\u{13216}");
 			output = output.replace(/[wuoåòóôùúûüýÿ]/g,"\u{13171}");
-			output = output.replace(/[rl]/g,"\u{1308B}");
+			output = output.replace(/[r]/g,"\u{1308B}");
+			output = output.replace(/[l]/g,"\u{130ED}");
 			output = output.replace(/[y]/g,"\u{133ED}");
 			output = output.replace(/[j]/g,"\u{13193}");
 			output = output.replace(/[q]/g,"\u{1320E}");
@@ -102,14 +109,13 @@
 			output = output.replace(/[ñ]/g,"\u{13216}\u{133ED}"); // Assuming 'n'+'y'
 			output = output.replace(/[õ]/g,"\u{13171}\u{13216}"); // Assuming 'o'+'n'
 			
-			// Add gender marker, if selected
-			
 			//console.log("Selected gender is: " + document.querySelector('input[name="gender"]:checked').value);
 			
+			// Add gender marker, if selected
 			if (document.querySelector('input[name="gender"]:checked').value=="male") {
 				output = output.concat("\u{13000}"); // Seated man
 			} else if (document.querySelector('input[name="gender"]:checked').value=="female") {
-				output = output.concat("\u{13050}"); // Seated woman (some as queen)
+				output = output.concat("\u{13050}"); // Seated woman (same as queen)
 			} else if (document.querySelector('input[name="gender"]:checked').value=="king") {
 				output = output.concat("\u{1302F}"); // Seated king
 			} else if (document.querySelector('input[name="gender"]:checked').value=="queen") {
@@ -139,7 +145,7 @@
 			//console.log("What position is s? " + output.search("\u{132F4}"));
 			
 			output = output.replace(/[\u{132F4}]/gu,"\u{13283}"); // Swap to other 's'
-			//                                    ^This u is important
+			//                                    ^This u is important for Unicode regexp
 			
 			//console.log("Vertical output is: " + output);
 		
