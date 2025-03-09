@@ -17,12 +17,16 @@
 			
 			input = input.toLowerCase();
 			input = input.replace(/[0-9`~!@#$%^&*_|+\=?;:"<>.,\s]/g,"");
-		
+			
+			//TODO: Extended ASCII characters, eg. á, ç
+				
 			var output = transliterate(input);
 			
 			console.log("Form output is: " + output);
 			
-			document.getElementById("outputField").innerHTML = output;
+			document.getElementById("outputFieldH").innerHTML = output;
+			
+			document.getElementById("outputFieldV").innerHTML = verticalise(output);
 		
 		}
 		
@@ -30,17 +34,54 @@
 		
 			console.log("Function input is: " + input);
 		
-			// Source: https://en.wikipedia.org/wiki/Transliteration_of_Ancient_Egyptian
+			// Sources: 
+			// https://en.wikipedia.org/wiki/Transliteration_of_Ancient_Egyptian
+			// https://en.wikipedia.org/wiki/Egyptian_Hieroglyphs_(Unicode_block)
+			// Ancient Egyptian Hieroglyhphs by J. Kamrin (ISBN 0-8109-4961-X)
 			
 			var output = input;
 			
-			//TODO: Add digraphs, eg. sh, ch, th and biliterals
+			//TODO: Add biliterals and triliterals
 			
+			// Specific names with own hieroglyphs; TODO: add more gods
+			output = output.replace(/^osiris$/g,"\u{13032}");
+			output = output.replace(/^hathor$/g,"\u{13065}");
+			output = output.replace(/^thoth$/g,"\u{1305F}");
+			output = output.replace(/^ra$/g,"\u{1305A}");
+			output = output.replace(/^khnum$/g,"\u{13060}");
+			output = output.replace(/^anubis$/g,"\u{13062}");
+			output = output.replace(/^seth$/g,"\u{13063}");
+			output = output.replace(/^min$/g,"\u{13064}");
+			output = output.replace(/^maat$/g,"\u{13066}");
+			output = output.replace(/^heh$/g,"\u{13068}");
+			output = output.replace(/^amun$/g,"\u{13068}");
+			output = output.replace(/^atum$/g,"\u{1306D}");
+			output = output.replace(/^montu$/g,"\u{1306E}");
+			output = output.replace(/^tatenen$/g,"\u{1306F}");
+			output = output.replace(/^ptah$/g,"\u{13070}");
+			output = output.replace(/^bes/g,"\u{13072}");
+			output = output.replace(/^khonsu$/g,"\u{13073}");
+			output = output.replace(/^set$/g,"\u{130E9}");
+			output = output.replace(/^horus$/g,"\u{13143}");
+			output = output.replace(/^nemty$/g,"\u{13147}");
+			output = output.replace(/^sopdu$/g,"\u{1314C}");
+			
+			// Common English digraphs
+			output = output.replace(/sh/g,"\u{13219}");
+			output = output.replace(/ch/g,"\u{1337F}"); // Same as 'th'
+			output = output.replace(/th/g,"\u{1337F}"); // Same as 'ch'
+			output = output.replace(/qu/g,"\u{133A1}\u{13171}"); // Assuming 'k'+'w'
+			output = output.replace(/kh/g,"\u{1340D}");
+			output = output.replace(/gh/g,"\u{1339B}");
+			output = output.replace(/ck/g,"k");
+			output = output.replace(/wh/g,"w");
+			
+			// Single letters/sounds
 			output = output.replace(/[a]/g,"\u{1313F}");
-			output = output.replace(/[i]/g,"\u{131CB}"); // Same as 'y'
+			output = output.replace(/[i]/g,"\u{131CB}");
 			output = output.replace(/[u]/g,"\u{13171}"); // Same as 'w'
-			output = output.replace(/[e]/g,"\u{131CB}"); // Same as 'i'
-			output = output.replace(/[o]/g,"\u{1313F}"); // Same as 'a'
+			output = output.replace(/[e]/g,"\u{1309D}");
+			output = output.replace(/[o]/g,"\u{13171}"); // Same as 'w'
 			output = output.replace(/[p]/g,"\u{132AA}");
 			output = output.replace(/[t]/g,"\u{133CF}");
 			output = output.replace(/[k]/g,"\u{133A1}");
@@ -57,38 +98,74 @@
 			output = output.replace(/[w]/g,"\u{13171}");
 			output = output.replace(/[r]/g,"\u{1308B}");
 			output = output.replace(/[l]/g,"\u{1308B}"); // Same as 'r'
-			output = output.replace(/[y]/g,"\u{131CB}");
+			output = output.replace(/[y]/g,"\u{133ED}");
 			output = output.replace(/[j]/g,"\u{13193}");
 			output = output.replace(/[q]/g,"\u{1320E}");
 			output = output.replace(/[x]/g,"\u{133A1}\u{132F4}"); // Assuming 'k'+'s'
 			output = output.replace(/[c]/g,"\u{133A1}"); // Same as 'k'
 			
-			//TODO: Refine phonological approximations
+			// Add gender marker, if selected
 			
-			console.log("Function output is: " + output);
+			//console.log("Selected gender is: " + document.querySelector('input[name="gender"]:checked').value);
+			
+			if (document.querySelector('input[name="gender"]:checked').value=="male") {
+				output = output.concat("\u{13000}"); // Seated man
+			} else if (document.querySelector('input[name="gender"]:checked').value=="female") {
+				output = output.concat("\u{13050}"); // Seated woman
+			}
+			
+			//console.log("Function output is: " + output);
 		
 			return output;
 		
 		}
-				
+		
+		function verticalise(input) {
+		
+			var output = "";
+			
+			//console.log("Verticalisation input length is: " + input.length);
+		
+			for (let i = 0; i < input.length; i+=2) {
+ 				 output += input[i] + input[i+1] + "<br>"; // Unicode takes up two slots
+			} 
+			
+			//console.log("What position is s? " + output.search("\u{132F4}"));
+			
+			output = output.replace(/[\u{132F4}]/gu,"\u{13283}"); // Swap to other 's'
+			//                                    ^This u is important
+			
+			//console.log("Vertical output is: " + output);
+		
+			return output;
+		
+		}
+						
 		</script>
 
 	<style>
 		body {font-family: sans-serif}
-		h1, h2, h3, noscript, form, output {text-align: center}
+		h1, noscript, form, output {text-align: center}
 		
-		.output {
-		  width: 160px;
+		.button {
+		  display: block;
+		  margin: auto;
+		  position: relative;
+		}
+		
+		.outputH {
+		  width: 200px;
 		  height: 40px;
 		  border: 4px double black;
 		  border-radius: 30px;
-		  display: inline-block;
-		  padding: 3px 5px;
+		  display: block;
+		  padding: 5px 5px;
 		  position: relative;
 		  font-size: large;
+		  margin: auto;
 		}
 
-		.output:after {
+		.outputH:after {
 		  content: '';
 		  position: absolute;
 		  right: -8px;
@@ -98,22 +175,53 @@
 		  border-right: 4px double black;
 		}
 		
+		.outputV {
+		  width: 40px;
+		  height: 200px;
+		  border: 4px double black;
+		  border-radius: 30px;
+		  display: block;
+		  padding: 5px 5px;
+		  position: relative;
+		  font-size: large;
+		  margin: auto;
+		}
+		
+		.line{
+    	  width: 60px;
+  	 	  height: 0px;
+    	  border-bottom: 4px double black;
+    	  position: relative;
+    	  margin: auto;
+    	}
+		
 	</style>
 
   </head>
 
   <body>
   <h1>Hieroglyph Transliterator</h1>
-      <form action="" id="mainForm">
+      <form action="" id="mainForm"> <!--TODO: Pushing Enter key activates form-->
           Enter your name:
           <input type="text" name="inputField" id="inputField" value=""></text>
-          <p><input type=button class="button" value="Transliterate to hieroglyphics" 
-				onClick="generate()"/></p>
-      	  <p id="outputField" class="output"><!--Start blank--></p>
+          <br />
+          Gender:
+  		  <input type="radio" id="gender-none" name="gender" value="none" checked>
+  		  <label for="none">None</label>
+  		  <input type="radio" id="gender-male" name="gender" value="male">
+  		  <label for="male">Male</label>
+  		  <input type="radio" id="gender-female" name="gender" value="female">
+  		  <label for="female">Female</label>
+          <input type=button class="button" value="Transliterate to hieroglyphics" 
+				onClick="generate()"/>
+		  <br />
+      	  <div id="outputFieldH" class="outputH"><!--Start blank--></div>
+      	  <br />
+      	  <div id="outputFieldV" class="outputV"><!--Start blank--></div>
+      	  <div class="line"></div>
       	  <!--TODO: Make cartouche sizing dynamic-->
-      	  <!--TODO: Add option of vertical or horizontal output, or right-to-left-->
-      	  <!--TODO: Fix output font size-->
-      	  <!--TODO: Add options for determiners (man, woman, king)-->
+      	  <!--TODO: Add option of right-to-left-->
+      	  <!--TODO: Add options for other determiners (king, queen, god)-->
       </form>
   </body>
 </html>
