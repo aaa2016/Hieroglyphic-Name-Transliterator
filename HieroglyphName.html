@@ -16,10 +16,8 @@
 			console.log("Form input is: " + input);
 			
 			input = input.toLowerCase();
-			input = input.replace(/[0-9`~!@#$%^&*_|+\=?;:"<>.,\s]/g,"");
-			
-			//TODO: Extended ASCII characters, eg. á, ç
-				
+			input = input.replace(/[0-9`~!@#$%^&*_|+\=?;:"<>.,\s\-]/g,"");
+							
 			var output = transliterate(input);
 			
 			console.log("Form output is: " + output);
@@ -77,32 +75,32 @@
 			output = output.replace(/wh/g,"w");
 			
 			// Single letters/sounds
-			output = output.replace(/[a]/g,"\u{1313F}");
-			output = output.replace(/[i]/g,"\u{131CB}");
-			output = output.replace(/[u]/g,"\u{13171}"); // Same as 'w'
-			output = output.replace(/[e]/g,"\u{1309D}");
-			output = output.replace(/[o]/g,"\u{13171}"); // Same as 'w'
+			output = output.replace(/[aàáâäæ]/g,"\u{1313F}");
+			output = output.replace(/[iìíîï]/g,"\u{131CB}");
+			output = output.replace(/[eœèéêëöø]/g,"\u{1309D}");
 			output = output.replace(/[p]/g,"\u{132AA}");
 			output = output.replace(/[t]/g,"\u{133CF}");
-			output = output.replace(/[k]/g,"\u{133A1}");
+			output = output.replace(/[kc]/g,"\u{133A1}");
 			output = output.replace(/[b]/g,"\u{130C0}");
 			output = output.replace(/[d]/g,"\u{130A7}");
 			output = output.replace(/[g]/g,"\u{133BD}");
-			output = output.replace(/[f]/g,"\u{13191}");
-			output = output.replace(/[s]/g,"\u{132F4}");
+			output = output.replace(/[fv]/g,"\u{13191}");
+			output = output.replace(/[sç]/g,"\u{132F4}");
 			output = output.replace(/[h]/g,"\u{13254}");
-			output = output.replace(/[v]/g,"\u{13191}"); // Same as 'f'
 			output = output.replace(/[z]/g,"\u{13283}");
 			output = output.replace(/[m]/g,"\u{13153}");
 			output = output.replace(/[n]/g,"\u{13216}");
-			output = output.replace(/[w]/g,"\u{13171}");
-			output = output.replace(/[r]/g,"\u{1308B}");
-			output = output.replace(/[l]/g,"\u{1308B}"); // Same as 'r'
+			output = output.replace(/[wuoåòóôùúûüýÿ]/g,"\u{13171}");
+			output = output.replace(/[rl]/g,"\u{1308B}");
 			output = output.replace(/[y]/g,"\u{133ED}");
 			output = output.replace(/[j]/g,"\u{13193}");
 			output = output.replace(/[q]/g,"\u{1320E}");
 			output = output.replace(/[x]/g,"\u{133A1}\u{132F4}"); // Assuming 'k'+'s'
-			output = output.replace(/[c]/g,"\u{133A1}"); // Same as 'k'
+			output = output.replace(/[šž]/g,"\u{13219}"); // Same as 'sh'
+			output = output.replace(/[ã]/g,"\u{1313F}\u{13216}"); // Assuming 'a'+'n'
+			output = output.replace(/[ðþ]/g,"\u{1337F}"); // Same as 'th'
+			output = output.replace(/[ñ]/g,"\u{13216}\u{133ED}"); // Assuming 'n'+'y'
+			output = output.replace(/[õ]/g,"\u{13171}\u{13216}"); // Assuming 'o'+'n'
 			
 			// Add gender marker, if selected
 			
@@ -111,7 +109,15 @@
 			if (document.querySelector('input[name="gender"]:checked').value=="male") {
 				output = output.concat("\u{13000}"); // Seated man
 			} else if (document.querySelector('input[name="gender"]:checked').value=="female") {
-				output = output.concat("\u{13050}"); // Seated woman
+				output = output.concat("\u{13050}"); // Seated woman (some as queen)
+			} else if (document.querySelector('input[name="gender"]:checked').value=="king") {
+				output = output.concat("\u{1302F}"); // Seated king
+			} else if (document.querySelector('input[name="gender"]:checked').value=="queen") {
+				output = output.concat("\u{13050}"); // Seated woman (same as woman)
+			} else if (document.querySelector('input[name="gender"]:checked').value=="god") {
+				output = output.concat("\u{1302D}"); // Seated god
+			} else if (document.querySelector('input[name="gender"]:checked').value=="goddess") {
+				output = output.concat("\u{13065}"); // Seated goddess
 			}
 			
 			//console.log("Function output is: " + output);
@@ -127,7 +133,7 @@
 			//console.log("Verticalisation input length is: " + input.length);
 		
 			for (let i = 0; i < input.length; i+=2) {
- 				 output += input[i] + input[i+1] + "<br>"; // Unicode takes up two slots
+ 				 output += input[i] + input[i+1] + "\n"; // Unicode takes up two slots
 			} 
 			
 			//console.log("What position is s? " + output.search("\u{132F4}"));
@@ -194,6 +200,12 @@
     	  position: relative;
     	  margin: auto;
     	}
+    	
+    	.footnote {
+    	  margin: 20px;
+    	  font-size: small;
+    	  text-align: left;
+    	}
 		
 	</style>
 
@@ -207,11 +219,21 @@
           <br />
           Gender:
   		  <input type="radio" id="gender-none" name="gender" value="none" checked>
-  		  <label for="none">None</label>
+  		  <label for="none">None</label><!--Default is None-->
   		  <input type="radio" id="gender-male" name="gender" value="male">
   		  <label for="male">Male</label>
   		  <input type="radio" id="gender-female" name="gender" value="female">
   		  <label for="female">Female</label>
+		  <br />
+		  <input type="radio" id="gender-king" name="gender" value="king">
+  		  <label for="male">King</label>
+  		  <input type="radio" id="gender-queen" name="gender" value="queen">
+  		  <label for="female">Queen</label>
+		  <br />
+		  <input type="radio" id="gender-god" name="gender" value="god">
+  		  <label for="male">God</label>
+  		  <input type="radio" id="gender-goddess" name="gender" value="goddess">
+  		  <label for="female">Goddess</label>
           <input type=button class="button" value="Transliterate to hieroglyphics" 
 				onClick="generate()"/>
 		  <br />
@@ -220,8 +242,17 @@
       	  <div id="outputFieldV" class="outputV"><!--Start blank--></div>
       	  <div class="line"></div>
       	  <!--TODO: Make cartouche sizing dynamic-->
-      	  <!--TODO: Add option of right-to-left-->
-      	  <!--TODO: Add options for other determiners (king, queen, god)-->
+      	  <!--TODO: Add option of right-to-left (Note: not supported in Unicode yet)-->
+      	  <div class="footnote">
+      	  	Sources:<br />
+		  	<a href="https://en.wikipedia.org/wiki/Transliteration_of_Ancient_Egyptian">
+		  	  https://en.wikipedia.org/wiki/Transliteration_of_Ancient_Egyptian</a><br />
+		  	<a href="https://en.wikipedia.org/wiki/Egyptian_Hieroglyphs_(Unicode_block)">
+		  	  https://en.wikipedia.org/wiki/Egyptian_Hieroglyphs_(Unicode_block)</a><br />
+		  	<a href="https://openlibrary.org/books/OL7998662M/Ancient_Egyptian_Hieroglyphs">
+		  	  Ancient Egyptian Hieroglyphs: A Practical Guide by J. Kamrin 
+		  	  (ISBN 0-8109-4961-X)</a>
+		  </div>
       </form>
   </body>
 </html>
